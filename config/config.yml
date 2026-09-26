@@ -1,0 +1,15 @@
+# fdroidserver config. Copied into a scratch directory by the Publish
+# workflow; secrets come from the environment, never from this file.
+repo_url: https://blauertee.github.io/fdroid/repo
+repo_name: blauertee
+# TODO: write the real repo name and description.
+repo_description: Placeholder description for this F-Droid repository.
+
+# Versions per app are chosen by scripts/fetch_sources.py; fdroid keeps
+# everything it is given and never creates an archive.
+archive_older: 0
+
+repo_keyalias: fdroidrepo
+keystore: {env: FDROID_KEYSTORE_PATH}
+keystorepass: {env: FDROID_KEYSTORE_PASSWORD}
+keypass: {env: FDROID_KEYSTORE_PASSWORD}

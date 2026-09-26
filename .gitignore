@@ -1,0 +1,11 @@
+# Never commit keys, secret-bearing config, APKs or build output.
+/config.yml
+*.p12
+*.jks
+*.keystore
+*.apk
+/repo/
+/archive/
+/tmp/
+/_site/
+__pycache__/

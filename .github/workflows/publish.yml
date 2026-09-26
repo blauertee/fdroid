@@ -1,0 +1,61 @@
+name: Publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - sources/**
+      - metadata/**
+      - config/**
+      - scripts/**
+      - requirements.txt
+      - .github/workflows/publish.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      # Full history: the previous version of each app is read from the
+      # git history of its source file.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install fdroidserver
+        run: pip install -r requirements.txt
+
+      - name: Build repo
+        env:
+          FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
+          FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
+        run: scripts/build.sh "$RUNNER_TEMP/fdroid-work" "$RUNNER_TEMP/site"
+
+      - name: Remove keystore
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/fdroid-work"
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ${{ runner.temp }}/site
+
+      - id: deploy
+        uses: actions/deploy-pages@v5
