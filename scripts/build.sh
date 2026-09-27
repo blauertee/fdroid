@@ -34,7 +34,8 @@ umask 022
 
 # Relative paths: fetch_sources.py reads their git history.
 python3 scripts/fetch_sources.py --sources sources --metadata metadata \
-  --out "$work/fdroid/repo" --expected "$work/expected.json"
+  --out "$work/fdroid/repo" --expected "$work/expected.json" \
+  --listings "$work/fdroid/build"
 
 (cd "$work/fdroid" && fdroid update --use-date-from-apk)
 

@@ -10,7 +10,8 @@ applicationId the source file is named after.
 A tag counts as one version even when its per-ABI APKs carry different
 versionCodes (Flutter's --split-per-abi does that). Writes a JSON file
 mapping each published applicationId to the tags and versionCodes that must
-appear in the generated index.
+appear in the generated index. The store listing (descriptions, screenshots)
+is checked out from the app's own repo at the newest kept version's commit.
 """
 
 import argparse
@@ -115,12 +116,46 @@ def fetch_version(appid, src, where, tmp):
     return files
 
 
+def fetch_listing(appid, src, listings):
+    """Check out the app's fastlane store listing at the source commit.
+
+    fdroid update reads build/<appid>/fastlane/metadata/android/<locale>/, so
+    the listing always matches the commit the newest APKs were built from.
+    """
+    if not src["commit"]:
+        print(f"::warning::{appid}: no commit in source file, no store listing")
+        return
+    dest = listings / appid
+    url = f"https://github.com/{src['repo']}.git"
+    steps = [
+        ["init", "--quiet", str(dest)],
+        ["-C", str(dest), "remote", "add", "origin", url],
+        ["-C", str(dest), "sparse-checkout", "set", "fastlane/metadata/android"],
+        ["-C", str(dest), "fetch", "--quiet", "--depth", "1",
+         "--filter=blob:none", "origin", src["commit"]],
+        ["-C", str(dest), "checkout", "--quiet", "FETCH_HEAD"],
+    ]
+    for step in steps:
+        run = subprocess.run(["git", *step], capture_output=True, text=True)
+        if run.returncode != 0:
+            print(f"::warning::{appid}: store listing not fetched from "
+                  f"{src['repo']}@{src['commit'][:12]}: {run.stderr.strip()}")
+            shutil.rmtree(dest, ignore_errors=True)
+            return
+    if not (dest / "fastlane/metadata/android").is_dir():
+        print(f"::warning::{appid}: {src['repo']}@{src['commit'][:12]} "
+              "has no fastlane/metadata/android")
+        return
+    print(f"  store listing from {src['repo']}@{src['commit'][:12]}")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--sources", type=Path, default=Path("sources"))
     p.add_argument("--metadata", type=Path, default=Path("metadata"))
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--expected", type=Path, required=True)
+    p.add_argument("--listings", type=Path, required=True)
     p.add_argument("--keep", type=int, default=2)
     args = p.parse_args()
 
@@ -173,6 +208,8 @@ def main():
                 for code, name, f in files:
                     shutil.move(f, args.out / f"{appid}_{code}_{name}")
                 print(f"  kept {src['tag']} (versionCodes {codes})")
+                if len(kept) == 1:
+                    fetch_listing(appid, src, args.listings)
             if len(kept) < args.keep:
                 print(f"::warning::{appid}: only {len(kept)} of {args.keep} versions available")
             expected[appid] = [{"tag": t, "versionCodes": cs} for t, cs in kept]
