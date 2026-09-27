@@ -27,6 +27,9 @@ keytool -list -keystore "$FDROID_KEYSTORE_PATH" -storepass:env FDROID_KEYSTORE_P
 cp "$checkout/config/config.yml" "$work/fdroid/config.yml"
 chmod 600 "$work/fdroid/config.yml"
 cp -r "$checkout/metadata" "$work/fdroid/metadata"
+# fdroid looks for the repo icon at ./icon.png (config's default repo_icon)
+# relative to its cwd below.
+cp "$checkout/assets/icon.png" "$work/fdroid/icon.png"
 umask 022
 
 # Relative paths: fetch_sources.py reads their git history.
