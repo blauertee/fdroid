@@ -36,9 +36,11 @@ python3 scripts/fetch_sources.py --sources sources --metadata metadata \
 (cd "$work/fdroid" && fdroid update --use-date-from-apk)
 
 python3 "$checkout/scripts/check_index.py" "$work/fdroid/repo" "$work/expected.json"
-"$checkout/scripts/summary.sh" "$work/fdroid/repo" "$work/expected.json"
+"$checkout/scripts/summary.sh" "$work/fdroid/repo" "$work/expected.json" "$work/fingerprint"
 
 cp -r "$work/fdroid/repo" "$site/repo"
-# fdroid's generated web page and QR code are not published (a page comes
-# later), nor is its build status.
+# fdroid's own web page and QR code are replaced by render_page.py's, and
+# its build status is not published.
 rm -rf "$site/repo/index.html" "$site/repo/index.css" "$site/repo/index.png" "$site/repo/status"
+python3 "$checkout/scripts/render_page.py" "$checkout/config/config.yml" \
+  "$(cat "$work/fingerprint")" "$site" "$checkout/README.md"

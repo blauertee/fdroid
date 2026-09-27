@@ -9,6 +9,7 @@ on:
       - config/**
       - scripts/**
       - requirements.txt
+      - README.md
       - .github/workflows/publish.yml
   workflow_dispatch:
 

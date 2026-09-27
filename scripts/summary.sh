@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Check that the index jars are signed by the repo key and write the key's
 # SHA-256 fingerprint, the add-repo URL and the published versions to the
-# job summary (or stdout outside Actions).
-# Usage: summary.sh <repo dir> <expected.json>
+# job summary (or stdout outside Actions). Also writes the fingerprint to
+# <fingerprint file> for the web page.
+# Usage: summary.sh <repo dir> <expected.json> <fingerprint file>
 set -euo pipefail
 
 repo_dir=$1
 expected=$2
+fingerprint_file=$3
 out=${GITHUB_STEP_SUMMARY:-/dev/stdout}
 repo_url=https://blauertee.github.io/fdroid/repo
 
@@ -23,6 +25,8 @@ for jar in entry.jar index-v1.jar; do
     exit 1
   fi
 done
+
+echo "$fingerprint" > "$fingerprint_file"
 
 {
   echo "## F-Droid repo"
