@@ -1,0 +1,22 @@
+Transportia+ is a fork of Wafler1/transportia, a travel companion for public
+transportation. It installs side by side with the original app.
+
+What Transportia offers:
+
+* Plan routes with confidence — compare step-by-step options, see transfers
+  and timing at a glance
+* Understand what's moving — live map of nearby stops and vehicles
+* Check stop times fast — upcoming arrivals and departures for any stop
+* Keep essentials handy — save home, work, and favourites; start a trip with
+  one tap
+* Stay focused — intentionally simple UI for quick navigation
+
+What this fork adds:
+
+* Saved trips — keep an itinerary for later, with live times refreshed
+* A richer search — pick exact transport modes, via stops, transfers,
+  walking/cycling speed and step-free routes right from the search screen
+* A redesigned journey view — one continuous timeline from search to
+  itinerary, with tappable stops and pull-to-refresh
+
+Source and issues: https://github.com/blauertee/transportia
