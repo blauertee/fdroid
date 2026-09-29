@@ -1,9 +1,9 @@
 # Written by blauertee/transportia's dev-build workflow. Do not edit by hand.
 repo: blauertee/transportia
-tag: "v1.0.4-dev.11"
-commit: "8362c9666771832857a83d5470ef990627edb39f"
+tag: "v1.0.4-dev.12"
+commit: "1282d1b54048acf0e1319549282d5899cbfa50a9"
 apks:
   - name: "transportia-arm64-v8a.apk"
-    sha256: "c64f1649d703eb7f63a02b990c8ca1508a357f85c0141a7fa0406119944a82bc"
+    sha256: "daf2cd43fa9c4ebf4d4aec4031327b6888ddd5816f43b2f72919f48acd649b81"
   - name: "transportia-armeabi-v7a.apk"
-    sha256: "aa5c68cc9bca00c33416da0ce1b7ade3d510759f51adccf889f97d15fbc0a843"
+    sha256: "57d1065a3a93e9e8a31af3b46ddac0d4357474762dccbebde2e96a380195bc57"
